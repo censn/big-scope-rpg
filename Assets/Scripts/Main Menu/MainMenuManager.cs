@@ -16,19 +16,22 @@ public class MainMenuManager : MonoBehaviour {
 
     private bool CanJoinLobby {
         get {
-            return population.IsBelowCapacity;
+            return population.IsBelowCapacity && !connecting.enabled;
         }
     }
 
     public void JoinLobby() {
         connecting.enabled = true;
-        PhotonNetwork.ConnectUsingSettings("apple");
-        PhotonNetwork.JoinLobby();
-        SceneManager.LoadScene(1);
+        if (PhotonNetwork.ConnectUsingSettings("apple")) {
+            PhotonNetwork.JoinLobby();
+            SceneManager.LoadScene(1);
+        }
     }
 
     private void Update() {
-        int playerCount = PhotonNetwork.countOfPlayers;
-        joinLobby.enabled = CanJoinLobby;
+        joinLobby.interactable = CanJoinLobby;
+        if (PhotonNetwork.connectedAndReady) {
+            connecting.text = "Connected!";
+        }
     }
 }
