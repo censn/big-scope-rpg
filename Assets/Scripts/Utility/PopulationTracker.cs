@@ -14,6 +14,8 @@ public class PopulationTracker : MonoBehaviour {
     }
 
     private void Update() {
-        text.SetText("{0}/{1}", PhotonNetwork.countOfPlayers, MAX_ALLOWED_PLAYERS);
+        if (PhotonNetwork.connectedAndReady) {
+            text.SetText("{0}/{1}", PhotonNetwork.countOfPlayers, MAX_ALLOWED_PLAYERS);
+        }
     }
 }

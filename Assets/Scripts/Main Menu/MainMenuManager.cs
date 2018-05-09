@@ -16,22 +16,24 @@ public class MainMenuManager : MonoBehaviour {
 
     private bool CanJoinLobby {
         get {
-            return population.IsBelowCapacity && !connecting.enabled;
+            return population.IsBelowCapacity && connecting.enabled;
         }
     }
 
     public void JoinLobby() {
-        connecting.enabled = true;
+        SceneUtil.LoadScene(Scene.LOBBY);
+    }
+
+    private void Start() {
         if (PhotonNetwork.ConnectUsingSettings("apple")) {
-            PhotonNetwork.JoinLobby();
-            SceneManager.LoadScene(1);
+            connecting.text = "Ready to join lobby.";
+            connecting.enabled = true;
+        } else {
+            connecting.text = "Unable to connect. Max CCU might have been reached or something else.";
         }
     }
 
     private void Update() {
         joinLobby.interactable = CanJoinLobby;
-        if (PhotonNetwork.connectedAndReady) {
-            connecting.text = "Connected!";
-        }
     }
 }

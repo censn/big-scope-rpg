@@ -1,27 +1,34 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Listing : MonoBehaviour {
+    private static CachedObject<LobbyManager> lobby = new CachedObject<LobbyManager>();
 
     [SerializeField]
-    private int maxAllowedPlayersPerRoom;
+    private Button button;
 
     [SerializeField]
     private TextMeshProUGUI listingDisplay;
 
-    private new string name;
     private RoomInfo room;
 
-    public void Init(string name, RoomInfo room) {
-        this.name = name;
+    public string RoomName {
+        get {
+            return RoomName;
+        }
+    }
+
+    public void Init(RoomInfo room) {
         this.room = room;
     }
 
-    public void JoinRoom() {
-        PhotonNetwork.JoinRoom(this.name);
+    public void Select() {
+        lobby.Item.selected = this.room;
     }
 
     private void Update() {
-        this.listingDisplay.SetText(string.Format("{0} ({1}/{2})", name, room.PlayerCount, maxAllowedPlayersPerRoom));
+        this.listingDisplay.SetText(string.Format("{0} ({1}/{2})", room.Name, room.PlayerCount, room.MaxPlayers));
+        button.interactable = (lobby.Item.selected != this.room);
     }
 }
