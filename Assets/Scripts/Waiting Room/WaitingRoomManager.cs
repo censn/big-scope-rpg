@@ -8,6 +8,7 @@ public class WaitingRoomManager : MonoBehaviour {
     private TextMeshProUGUI roomName;
 
     public void GoBack() {
+        PhotonNetwork.LeaveRoom();
         SceneUtil.LoadScene(Scene.LOBBY);
     }
 
