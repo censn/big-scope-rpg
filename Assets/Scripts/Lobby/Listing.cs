@@ -15,7 +15,7 @@ public class Listing : MonoBehaviour {
 
     public string RoomName {
         get {
-            return RoomName;
+            return room.Name;
         }
     }
 
