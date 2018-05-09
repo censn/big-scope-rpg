@@ -22,9 +22,10 @@ public class LobbyManager : MonoBehaviour {
 
     public RoomInfo selected;
 
+    // TODO guarantee a unique name by using gamejolt credentials
     public void CreateRoom() {
-        string roomName = string.Format("{0}'s game", PhotonNetwork.player.ID);
-        if (!PhotonNetwork.CreateRoom(roomName, new RoomOptions() { MaxPlayers = maxPlayersPerRoom }, null)) {
+        string roomName = string.Format("{0}'s game", PhotonNetwork.player.UserId);
+        if (!PhotonNetwork.JoinOrCreateRoom(roomName, new RoomOptions() { MaxPlayers = maxPlayersPerRoom }, null)) {
             Util.Log("Create room failed.");
         } else {
             SceneUtil.LoadScene(Scene.WAITING_ROOM);
@@ -46,14 +47,21 @@ public class LobbyManager : MonoBehaviour {
     }
 
     private void Start() {
-        Util.Assert(PhotonNetwork.JoinLobby(), "lobby join not successful");
+        StartCoroutine(ConnectToLobby());
+    }
+
+    private IEnumerator ConnectToLobby() {
+        yield return new WaitUntil(() => PhotonNetwork.connectedAndReady);
+        PhotonNetwork.JoinLobby();
         StartCoroutine(RefreshRoomListings());
     }
 
     private IEnumerator RefreshRoomListings() {
         while (true) {
             Util.Log("Start room refresh with {0} rooms", PhotonNetwork.GetRoomList().Length);
-            UpdateRoomListings();
+            if (PhotonNetwork.insideLobby) {
+                UpdateRoomListings();
+            }
             yield return new WaitForSeconds(refreshRate);
         }
     }

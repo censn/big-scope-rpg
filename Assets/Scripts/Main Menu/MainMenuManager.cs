@@ -1,4 +1,6 @@
-﻿using TMPro;
+﻿using GameJolt.API;
+using GameJolt.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,12 +14,19 @@ public class MainMenuManager : MonoBehaviour {
     private Button joinLobby;
 
     [SerializeField]
+    private Button signIn;
+
+    [SerializeField]
     private PopulationTracker population;
 
     private bool CanJoinLobby {
         get {
-            return population.IsBelowCapacity && connecting.enabled;
+            return population.IsBelowCapacity && connecting.enabled && GameJoltAPI.Instance.HasSignedInUser;
         }
+    }
+
+    public void SignIn() {
+        GameJoltUI.Instance.ShowSignIn();
     }
 
     public void JoinLobby() {
@@ -35,5 +44,6 @@ public class MainMenuManager : MonoBehaviour {
 
     private void Update() {
         joinLobby.interactable = CanJoinLobby;
+        signIn.interactable = !GameJoltAPI.Instance.HasSignedInUser;
     }
 }
