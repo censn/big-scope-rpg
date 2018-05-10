@@ -22,6 +22,6 @@ MonoBehaviour:
   encryptionKey: "4=08O00Dn0\xA7xIMoS"
   logLevel: 1
   secretTrophies: 
-  autoConnect: 0
+  autoConnect: 1
   user: eternity_labs
   token: BBy36D

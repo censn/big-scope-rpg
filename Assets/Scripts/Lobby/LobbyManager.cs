@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using GameJolt.API;
+using GameJolt.API.Objects;
+using Photon;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LobbyManager : MonoBehaviour {
+public class LobbyManager : PunBehaviour {
     [SerializeField]
     private byte maxPlayersPerRoom;
 
@@ -22,9 +25,9 @@ public class LobbyManager : MonoBehaviour {
 
     public RoomInfo selected;
 
-    // TODO guarantee a unique name by using gamejolt credentials
     public void CreateRoom() {
-        string roomName = string.Format("{0}'s game", PhotonNetwork.player.UserId);
+        PhotonPlayer current = PhotonNetwork.player;
+        string roomName = string.Format("{0}'s room", current.NickName);
         if (!PhotonNetwork.JoinOrCreateRoom(roomName, new RoomOptions() { MaxPlayers = maxPlayersPerRoom }, null)) {
             Util.Log("Create room failed.");
         } else {
@@ -50,20 +53,15 @@ public class LobbyManager : MonoBehaviour {
         StartCoroutine(ConnectToLobby());
     }
 
+    public override void OnReceivedRoomListUpdate() {
+        UpdateRoomListings();
+    }
+
     private IEnumerator ConnectToLobby() {
         yield return new WaitUntil(() => PhotonNetwork.connectedAndReady);
         PhotonNetwork.JoinLobby();
-        StartCoroutine(RefreshRoomListings());
-    }
-
-    private IEnumerator RefreshRoomListings() {
-        while (true) {
-            Util.Log("Start room refresh with {0} rooms", PhotonNetwork.GetRoomList().Length);
-            if (PhotonNetwork.insideLobby) {
-                UpdateRoomListings();
-            }
-            yield return new WaitForSeconds(refreshRate);
-        }
+        PhotonNetwork.player.NickName = GameJoltAPI.Instance.CurrentUser.Name;
+        Debug.Log(PhotonNetwork.player.NickName);
     }
 
     private void UpdateRoomListings() {

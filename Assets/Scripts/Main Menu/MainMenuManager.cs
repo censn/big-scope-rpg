@@ -21,7 +21,9 @@ public class MainMenuManager : MonoBehaviour {
 
     private bool CanJoinLobby {
         get {
-            return population.IsBelowCapacity && connecting.enabled && GameJoltAPI.Instance.HasSignedInUser;
+            return population.IsBelowCapacity 
+                && connecting.enabled 
+                && GameJoltAPI.Instance.HasSignedInUser;
         }
     }
 
